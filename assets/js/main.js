@@ -28,7 +28,7 @@ const init = () => {
   initNewsletter();
   // # lazy load
   const ll = new LazyLoad({
-    threshold: 400,
+    threshold: 100,
     elements_selector: ".lazy",
   });
 };

@@ -280,7 +280,128 @@
     &_items {
       p {
         margin-top: 15px;
-        font-size: 1.8rem;
+        font-size: min(4.348vw, 1.8rem);;
+      }
+    }
+  }
+}
+
+/* -------------------------------- category -------------------------------- */
+
+.c-category {
+  &_inner {
+    padding-top: 150px;
+    margin-top: 70px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  &_l {
+    h2 {
+      margin-top: 10px;
+      font-size: 1.9rem;
+      font-weight: 400;
+    }
+  }
+
+  &_r {
+    position: relative;
+    grid-column: 2/5;
+
+    ul {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      li {
+        a {
+          font-size: 4.8rem;
+          font-weight: 400;
+          letter-spacing: -0.5px;
+          line-height: 1.1;
+
+          width: fit-content;
+          display: flex;
+          align-items: center;
+          gap: 25px;
+
+          svg {
+            opacity: 0;
+            transition: opacity 0.2s ease-in;
+          }
+
+          div.thumb {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 11.389vw;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease-in;
+
+            picture {
+              padding-bottom: calc(218 / 164 * 100%);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @include minW {
+    &_r {
+      ul {
+        li {
+          a {
+            &:hover {
+              opacity: 1;
+              font-family: var(--tn-fonts);
+              font-size: 5.1rem;
+
+              svg {
+                opacity: 1;
+              }
+
+              div.thumb {
+                opacity: 1;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @include maxW {
+    &_inner {
+      padding-top: 60px;
+      margin-top: 60px;
+      grid-template-columns: 1fr;
+      gap: 27px;
+    }
+
+    &_l {
+      h2 {
+        font-size: 1.6rem;
+      }
+    }
+
+    &_r {
+      grid-column: initial;
+
+      ul {
+        li {
+          a {
+            font-size: min(7.246vw, 3rem);
+
+            svg,
+            div.thumb {
+              display: none;
+            }
+          }
+        }
       }
     }
   }
