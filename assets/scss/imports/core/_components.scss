@@ -110,6 +110,22 @@
   flex-direction: column;
   gap: 8px;
 
+  &_tabs {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+
+    h2 {
+      opacity: 0.3;
+      transition: opacity 0.2s ease-in;
+      cursor: pointer;
+
+      &.--active {
+        opacity: 1;
+      }
+    }
+  }
+
   p {
     font-size: 1.9rem;
     line-height: 1.1;
@@ -118,19 +134,24 @@
   h2 {
     font-size: 4.8rem;
     font-weight: 400;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.72px;
     line-height: 1.1;
   }
 
   @include maxW {
     gap: 5px;
 
+    &_tabs {
+      justify-content: space-between;
+      gap: 5px;
+    }
+
     p {
       font-size: 1.6rem;
     }
 
     h2 {
-      font-size: 3.6rem;
+      font-size: min(8.696vw, 3.6rem);
     }
   }
 }
@@ -280,7 +301,7 @@
     &_items {
       p {
         margin-top: 15px;
-        font-size: min(4.348vw, 1.8rem);;
+        font-size: 1.8rem;
       }
     }
   }
@@ -402,6 +423,79 @@
             }
           }
         }
+      }
+    }
+  }
+}
+
+/* ----------------------------- product feature ---------------------------- */
+
+.c-prodfeat {
+  &_swiper {
+    margin: 25px calc(0px - var(--padd)) 0;
+    padding: 0 var(--padd);
+    position: relative;
+    overflow: hidden;
+  }
+
+  &_card {
+    position: relative;
+    z-index: 1;
+
+    &:hover {
+      opacity: 1;
+      .c-button {
+        background: var(--black-cl);
+        color: var(--white-cl);
+      }
+    }
+
+    .btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .c-picture {
+      padding-bottom: calc(436 / 328 * 100%);
+
+      img {
+        mix-blend-mode: multiply;
+      }
+    }
+
+    h3 {
+      margin-top: 20px;
+      font-family: var(--tn-fonts);
+      font-size: 2.1rem;
+      line-height: 1.15;
+      font-weight: 400;
+      letter-spacing: -0.5px;
+    }
+
+    p {
+      margin-top: 10px;
+      font-size: 1.6rem;
+    }
+  }
+
+  @include maxW {
+    &_swiper {
+      margin: 25px calc(0px - var(--paddsp)) 0;
+      padding: 0 var(--paddsp);
+    }
+
+    &_card {
+      h3 {
+        margin-top: 17px;
+        font-size: 1.8rem;
+      }
+
+      p {
+        font-size: 1.4rem;
       }
     }
   }

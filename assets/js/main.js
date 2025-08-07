@@ -26,6 +26,8 @@ const init = () => {
   initCart();
   // # init newsletter
   initNewsletter();
+  // # init tabs
+  initTabs();
   // # lazy load
   const ll = new LazyLoad({
     threshold: 100,
@@ -255,6 +257,59 @@ const initNewsletter = () => {
     });
   });
 };
+
+// ===== handle tabs change ======
+
+const initTabs = () => {
+  const tabs = document.querySelectorAll("[data-tabs-items]");
+  const panels = document.querySelectorAll("[data-tabs-panels]");
+  if (!tabs.length || !panels.length) return;
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const targetId = tab.getAttribute("data-tabs-items");
+      const contentWrapper = document.querySelector("[data-tabs]");
+      contentWrapper?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      window.lenis.stop();
+
+      // remove active classes
+      tabs.forEach((t) => t.classList.remove("--active"));
+      panels.forEach((c) => c.classList.remove("--active"));
+
+      // add active to clicked tab and corresponding content
+      window.lenis.start();
+      document
+        .querySelectorAll(`[data-tabs-items="${targetId}"]`)
+        .forEach((matchedTab) => matchedTab.classList.add("--active"));
+      const content = document.querySelector(
+        `[data-tabs-panels="${targetId}"]`
+      );
+      if (content) content.classList.add("--active");
+    });
+  });
+};
+
+// ===== swiper product feature ======
+const prodfeatSwiper = new Swiper("[data-prodfeat-swiper]", {
+  speed: 700,
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+  breakpoints: {
+    0: {
+      slidesPerView: 1.369,
+      spaceBetween: 12,
+    },
+    1025: {
+      slidesPerView: 4,
+      spaceBetween: 20,
+    },
+  },
+});
 
 // ### ===== DOMCONTENTLOADED ===== ###
 window.addEventListener("pageshow", init);
