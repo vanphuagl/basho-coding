@@ -16,8 +16,6 @@ const detectScroll = (detect) => {
 
 // ===== init =====
 const init = () => {
-  // #
-  document.body.classList.remove("fadeout");
   // # app height
   appHeight();
   // # init menu
@@ -28,6 +26,8 @@ const init = () => {
   initNewsletter();
   // # init tabs
   initTabs();
+  // # init product feature swiper
+  initProdfeatSwipers();
   // # lazy load
   const ll = new LazyLoad({
     threshold: 100,
@@ -293,23 +293,74 @@ const initTabs = () => {
 };
 
 // ===== swiper product feature ======
-const prodfeatSwiper = new Swiper("[data-prodfeat-swiper]", {
-  speed: 700,
-  navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
-  },
-  breakpoints: {
-    0: {
+
+const initProdfeatSwipers = () => {
+  const [arrSwiper, navPrev, navNext] = [
+    document.querySelectorAll("[data-prodfeat-swiper]"),
+    document.querySelector("[data-prodfeat-prev]"),
+    document.querySelector("[data-prodfeat-next]"),
+  ];
+  const swipers = [];
+
+  // init all swiper
+  arrSwiper.forEach((el) => {
+    const swiper = new Swiper(el, {
+      speed: 700,
       slidesPerView: 1.369,
       spaceBetween: 12,
-    },
-    1025: {
-      slidesPerView: 4,
-      spaceBetween: 20,
-    },
-  },
-});
+      allowTouchMove: false,
+      breakpoints: {
+        1025: {
+          slidesPerView: 4,
+          spaceBetween: 20,
+        },
+      },
+      navigation: {
+        nextEl: navNext,
+        prevEl: navPrev,
+      },
+    });
+    swipers.push({ el, swiper });
+  });
+
+  // auto enable navigation for active panel
+  const updateActiveSwiperNav = () => {
+    swipers.forEach((obj) => {
+      const { el, swiper } = obj;
+      const isVisible = el
+        .closest("[data-tabs-panels]")
+        ?.classList.contains("--active");
+
+      if (isVisible) {
+        swiper.params.navigation.nextEl = navNext;
+        swiper.params.navigation.prevEl = navPrev;
+        swiper.navigation.init();
+
+        swiper.slideTo(0, 0);
+        swiper.updateSize();
+        swiper.updateSlides();
+
+        requestAnimationFrame(() => {
+          swiper.navigation.update();
+        });
+      } else {
+        swiper.navigation.destroy();
+      }
+    });
+  };
+  updateActiveSwiperNav();
+
+  // if tabs exist, detect for tab change event
+  document.querySelectorAll("[data-tabs-panels]").forEach((panel) => {
+    const observer = new MutationObserver(() => {
+      updateActiveSwiperNav();
+    });
+    observer.observe(panel, { attributes: true, attributeFilter: ["class"] });
+  });
+};
 
 // ### ===== DOMCONTENTLOADED ===== ###
-window.addEventListener("pageshow", init);
+window.addEventListener("pageshow", () => {
+  document.body.classList.remove("fadeout");
+});
+window.addEventListener("DOMContentLoaded", init);

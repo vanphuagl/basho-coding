@@ -431,6 +431,9 @@
 /* ----------------------------- product feature ---------------------------- */
 
 .c-prodfeat {
+  position: relative;
+  width: 100%;
+
   &_swiper {
     margin: 25px calc(0px - var(--padd)) 0;
     padding: 0 var(--padd);
@@ -479,6 +482,35 @@
     p {
       margin-top: 10px;
       font-size: 1.6rem;
+    }
+  }
+
+  &_wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &_nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    .swiper-button-next,
+    .swiper-button-prev {
+      position: initial;
+      margin: 0;
+      font-size: 0;
+      width: auto;
+      height: auto;
+
+      &.swiper-button-disabled {
+        opacity: 0.3;
+      }
+
+      &:after {
+        content: "";
+      }
     }
   }
 
