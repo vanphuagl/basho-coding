@@ -301,6 +301,7 @@ const initProdfeatSwipers = () => {
     document.querySelector("[data-prodfeat-next]"),
   ];
   const swipers = [];
+  if (!arrSwiper.length) return;
 
   // init all swiper
   arrSwiper.forEach((el) => {
