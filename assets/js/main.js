@@ -295,23 +295,25 @@ const initTabs = () => {
 // ===== swiper product feature ======
 
 const initProdfeatSwipers = () => {
-  const [arrSwiper, navPrev, navNext] = [
+  const [tabsPanels, swiperEls, navPrev, navNext] = [
+    document.querySelectorAll("[data-tabs-panels]"),
     document.querySelectorAll("[data-prodfeat-swiper]"),
     document.querySelector("[data-prodfeat-prev]"),
     document.querySelector("[data-prodfeat-next]"),
   ];
+  if (!navPrev || !navNext || swiperEls.length === 0) return;
   const swipers = [];
-  if (!arrSwiper.length) return;
 
   // init all swiper
-  arrSwiper.forEach((el) => {
+  swiperEls.forEach((el) => {
     const swiper = new Swiper(el, {
       speed: 700,
+      allowTouchMove: true,
       slidesPerView: 1.369,
       spaceBetween: 12,
-      allowTouchMove: false,
       breakpoints: {
         1025: {
+          allowTouchMove: false,
           slidesPerView: 4,
           spaceBetween: 20,
         },
@@ -349,10 +351,13 @@ const initProdfeatSwipers = () => {
       }
     });
   };
-  updateActiveSwiperNav();
+  
+  if (tabsPanels.length) {
+    updateActiveSwiperNav();
+  }
 
   // if tabs exist, detect for tab change event
-  document.querySelectorAll("[data-tabs-panels]").forEach((panel) => {
+  tabsPanels.forEach((panel) => {
     const observer = new MutationObserver(() => {
       updateActiveSwiperNav();
     });
