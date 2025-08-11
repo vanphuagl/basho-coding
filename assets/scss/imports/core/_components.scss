@@ -25,6 +25,7 @@
   img {
     position: absolute;
     top: 0;
+    left: 0;
   }
 }
 
@@ -134,7 +135,7 @@
   h2 {
     font-size: 4.8rem;
     font-weight: 400;
-    letter-spacing: -0.72px;
+    letter-spacing: -0.7px;
     line-height: 1.1;
   }
 
@@ -562,6 +563,33 @@
     &_swiper {
       margin: 25px calc(0px - var(--paddsp)) 0;
       padding: 0 var(--paddsp);
+    }
+  }
+}
+
+/* ------------------------------- dual layout ------------------------------ */
+
+.c-dual {
+  padding-top: 210px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  h2.title {
+    position: sticky;
+    top: 210px;
+    font-size: 3rem;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  @include maxW {
+    padding-top: 150px;
+    grid-template-columns: 1fr;
+    gap: 60px;
+
+    h2.title {
+      position: initial;
+      font-size: 2.2rem;
     }
   }
 }

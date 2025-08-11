@@ -116,5 +116,41 @@ const fvSwiper = new Swiper("[data-fv-swiper]", {
   },
 });
 
+// ===== intro =====
+
+let initialVH = window.innerHeight;
+const updateMarginsIntroPhoto = () => {
+  const pics = document.querySelectorAll(
+    ".intro_photo > [class*='intro_photo_pic']"
+  );
+
+  pics.forEach((pic) => {
+    const style = getComputedStyle(pic);
+    const topValue = style.top;
+    let topPx = 0;
+
+    if (topValue.includes("%")) {
+      topPx = initialVH * (parseFloat(topValue) / 100);
+    } else {
+      topPx = parseFloat(topValue);
+    }
+
+    const picHeight = pic.offsetHeight;
+    const bottom = isMobile.matches ? 200 : 100;
+    let mb = initialVH - picHeight - topPx - bottom;
+
+    if (mb < 0) mb = 0;
+    pic.style.marginBottom = `${mb}px`;
+  });
+};
+updateMarginsIntroPhoto();
+window.addEventListener("resize", () => {
+  // only update initialVH when actually rotating the screen
+  if (Math.abs(window.innerHeight - initialVH) > 100) {
+    initialVH = window.innerHeight;
+  }
+  updateMarginsIntroPhoto();
+});
+
 // ### ===== DOMCONTENTLOADED ===== ###
 window.addEventListener("DOMContentLoaded", homepage);

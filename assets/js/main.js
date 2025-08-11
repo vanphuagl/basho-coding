@@ -26,6 +26,8 @@ const init = () => {
   initNewsletter();
   // # init tabs
   initTabs();
+  // # init accordion
+  initAccordion();
   // # init product feature swiper
   initProdfeatSwipers();
   // # lazy load
@@ -265,29 +267,64 @@ const initTabs = () => {
   const panels = document.querySelectorAll("[data-tabs-panels]");
   if (!tabs.length || !panels.length) return;
 
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      const targetId = tab.getAttribute("data-tabs-items");
+  // function to activate a tab and panel by ID
+  const activateTab = (targetId) => {
+    // remove active classes
+    tabs.forEach((t) => t.classList.remove("--active"));
+    panels.forEach((c) => c.classList.remove("--active"));
+
+    // add active classes to the matching tab and panel
+    document
+      .querySelectorAll(`[data-tabs-items="${targetId}"]`)
+      .forEach((matchedTab) => matchedTab.classList.add("--active"));
+    const content = document.querySelector(`[data-tabs-panels="${targetId}"]`);
+    if (content) {
+      content.classList.add("--active");
       const contentWrapper = document.querySelector("[data-tabs]");
       contentWrapper?.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
+    }
+  };
+
+  // handle tab clicks
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const targetId = tab.getAttribute("data-tabs-items");
       window.lenis.stop();
-
-      // remove active classes
-      tabs.forEach((t) => t.classList.remove("--active"));
-      panels.forEach((c) => c.classList.remove("--active"));
-
-      // add active to clicked tab and corresponding content
+      activateTab(targetId);
       window.lenis.start();
-      document
-        .querySelectorAll(`[data-tabs-items="${targetId}"]`)
-        .forEach((matchedTab) => matchedTab.classList.add("--active"));
-      const content = document.querySelector(
-        `[data-tabs-panels="${targetId}"]`
-      );
-      if (content) content.classList.add("--active");
+    });
+  });
+
+  // check URL hash on page load
+  const hash = window.location.hash.replace("#", "");
+  if (hash) {
+    const targetTab = document.querySelector(`[data-tabs-items="${hash}"]`);
+    if (targetTab) {
+      activateTab(hash);
+    } else {
+      activateTab(tabs[0].getAttribute("data-tabs-items"));
+    }
+  }
+};
+
+// ===== accordion ======
+const initAccordion = () => {
+  const accordion = document.querySelectorAll("[data-accordion-btn]");
+  const panelAccordion = document.querySelectorAll("[data-accordion-panel]");
+  if (!accordion || !panelAccordion) return;
+
+  accordion.forEach((btn, i) => {
+    btn.addEventListener("click", () => {
+      btn.classList.toggle("--active");
+      const panel = panelAccordion[i];
+      if (panel.style.maxHeight) {
+        panel.style.maxHeight = null;
+      } else {
+        panel.style.maxHeight = panel.scrollHeight + "px";
+      }
     });
   });
 };
@@ -351,7 +388,7 @@ const initProdfeatSwipers = () => {
       }
     });
   };
-  
+
   if (tabsPanels.length) {
     updateActiveSwiperNav();
   }
@@ -364,6 +401,97 @@ const initProdfeatSwipers = () => {
     observer.observe(panel, { attributes: true, attributeFilter: ["class"] });
   });
 };
+
+// ===== products ======
+const initProductSwiper = (selector = "[data-productpage-swiper]") => {
+  const container = document.querySelector(selector);
+  if (!container) return;
+
+  const wrapper = container.querySelector(".swiper-wrapper");
+  const slides = wrapper.querySelectorAll(".swiper-slide");
+
+  // if less than 3 slides, clone to have enough
+  if (slides.length < 3) {
+    slides.forEach((slide) => {
+      const clone = slide.cloneNode(true);
+      const source = clone.querySelector("source");
+      if (source && source.dataset.srcset) {
+        source.srcset = source.dataset.srcset;
+      }
+      wrapper.appendChild(clone);
+    });
+  }
+
+  // Init Swiper
+  const swiper = new Swiper(selector, {
+    loop: true,
+    speed: 700,
+    slidesPerView: 1,
+    allowTouchMove: true,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+      renderBullet: function (index, className) {
+        if (index >= slides.length) return ""; // bỏ bullet dư
+        return `<span class="${className}">${index + 1}</span>`;
+      },
+    },
+    breakpoints: {
+      1025: {
+        slidesPerView: "auto",
+        allowTouchMove: false,
+      },
+    },
+    on: {
+      init: (swiper) => {
+        updatePaginationWidth(swiper);
+      },
+      resize: (swiper) => {
+        updatePaginationWidth(swiper);
+      },
+      slideChange: (swiper) => {
+        setActiveBullet(swiper, slides.length);
+      },
+    },
+  });
+
+  return swiper;
+};
+
+const updatePaginationWidth = (swiper) => {
+  const pagination = swiper.el.querySelector("[data-productpage-pagination]");
+  const firstSlide = swiper.slides[swiper.activeIndex] || swiper.slides[0];
+  if (pagination && firstSlide) {
+    pagination.style.width = `${firstSlide.offsetWidth}px`;
+  }
+};
+
+const setActiveBullet = (swiper, realSlidesCount) => {
+  const bullets = swiper.pagination.bullets;
+  bullets.forEach((bullet, idx) => {
+    bullet.classList.toggle(
+      swiper.params.pagination.bulletActiveClass,
+      idx === swiper.realIndex % realSlidesCount
+    );
+  });
+};
+
+initProductSwiper();
+
+// ===== contact form =====
+const [btnClear, formFields] = [
+  document.querySelector("[data-form-clear]"),
+  document.querySelectorAll("[data-form] input, [data-form] textarea"),
+];
+btnClear?.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (!formFields) return;
+  formFields.forEach((element) => (element.value = ""));
+});
 
 // ### ===== DOMCONTENTLOADED ===== ###
 window.addEventListener("pageshow", () => {
